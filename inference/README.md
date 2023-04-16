@@ -22,6 +22,15 @@ To build the services, run:
 docker compose --profile inference build
 ```
 
+> **Note:** You might need to compose with the `ci` profile at least once prior
+> to this in order to set up everything properly and not encounter errors like
+```
+[+] Running 2/0
+ ✘ inference-redis Error                                                                                                                                                                         0.0s 
+ ✘ inference-db Error                                                                                                                                                                            0.0s 
+Error response from daemon: Get "https://registry-1.docker.io/v2/": dial tcp: lookup registry-1.docker.io on [::1]:53: read udp [::1]:51400->[::1]:53: read: connection refused
+```
+
 Spin up the stack:
 
 ```shell
@@ -31,10 +40,10 @@ docker compose --profile inference up -d
 Tail the logs:
 
 ```shell
+# cd /root/of/this/repository
 docker compose logs -f    \
     inference-server      \
     inference-worker
-
 ```
 
 > **Note:** The compose file contains the bind mounts enabling you to develop on
@@ -42,14 +51,25 @@ docker compose logs -f    \
 > rebuilding.
 
 > **Note:** You can change the model by editing variable `MODEL_CONFIG_NAME` in
-> the `docker-compose.yaml` file. Valid model names can be found in
-> [model_configs.py](../oasst-shared/oasst_shared/model_configs.py).
+> the `docker-compose.yaml` file. Valid model names can be found at
+> https://huggingface.co/OpenAssistant .
 
 > **Note:** You can spin up any number of workers by adjusting the number of
-> replicas of the `inference-worker` service to your liking.
+> replicas of the `inference-worker` service (in the `docker-compose.yaml` file)
+> to your liking.
 
-> **Note:** Please wait for the `inference-text-generation-server` service to
-> output `{"message":"Connected"}` before starting to chat.
+> **Note:** Please wait for the `open-assistant-inference-worker` services to
+> finish downloading models before continuing to the next step.
+
+Spin up the text-client, and start chatting:
+
+```shell
+# cd /root/of/this/repository
+cd inference/text-client
+pip3 install --user -r requirements.txt
+PYTHONPATH=$PWD/../../oasst-shared python3 __main__.py
+# You'll soon see a `User:` prompt, where you can type your prompts.
+```
 
 Run the text client and start chatting:
 
