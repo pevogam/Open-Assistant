@@ -262,6 +262,7 @@ services:
       BACKEND_URL: "ws://inference-server:8000"
       PARALLELISM: 2
     volumes:
+      - "./data:/data"
       - "./oasst-shared:/opt/inference/lib/oasst-shared"
       - "./inference/worker:/opt/inference/worker"
     deploy:
