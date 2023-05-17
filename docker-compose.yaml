@@ -242,6 +242,13 @@ services:
         condition: service_healthy
       inference-db:
         condition: service_healthy
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
     profiles: ["inference"]
 
   inference-worker:
@@ -258,6 +265,12 @@ services:
       - "./oasst-shared:/opt/inference/lib/oasst-shared"
       - "./inference/worker:/opt/inference/worker"
     deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
       replicas: 1
     profiles: ["inference"]
 
